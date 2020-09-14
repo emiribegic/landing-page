@@ -105,11 +105,33 @@ section {
 
 
 /* Back To Top Button */
-#bttButton {
+.scroll-top {
+    display: none;
+}
+
+
+.is-shown {
+    display: block;
+}
+
+
+.arrow {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
     font-size: 2em;
     border: none;
-    background: transparent;
+    border-radius: 50%;
+    color: #000;
+    background: #fff;
+    
 }
+
+
+.arrow:hover {
+    cursor: pointer;
+    opacity: 0.7;
+  }
 
 
 /* Footer Styles */
