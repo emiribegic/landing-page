@@ -35,7 +35,7 @@ function createNewSections() {
         main.appendChild(newSection)
     }
 }
-//  createNewSections function must be implemented before other functions
+// createNewSections function must be implemented before other functions
 createNewSections();
 
 /**
@@ -45,6 +45,7 @@ createNewSections();
 
 const sections = document.querySelectorAll('section');
 const ul = document.querySelector('#navbar__list');
+const body = document.querySelector('body');
 
 /**
  * End Global Variables
@@ -109,27 +110,71 @@ function smoothScroll() {
             // Scroll to the destination using scrollIntoView method
             destination.scrollIntoView({ 
                 behavior: 'smooth' 
-            }); 
-        }) 
+            })
+        })
     })
 }
 
-// Add Back To Top (btt) button
-// Reference: https://gist.github.com/ricardozea/abb9f98a19f6d04a0269
+// Create Back To Top (btt) button
 let btt = document.createElement('button');
-btt.setAttribute('onclick', 'toTheTop()');
-btt.setAttribute('id', 'bttButton');
-btt.innerHTML = '<i class="far fa-arrow-alt-circle-up"></i>';
+btt.setAttribute('id', 'js-button');
+btt.setAttribute('class', 'scroll-top' + ' arrow');
+btt.innerHTML = '<i class="fas fa-arrow-up"></i>';
 main.appendChild(btt);
 
-function toTheTop() {
-    let position =
-        document.body.scrollTop || document.documentElement.scrollTop;
-        if (position) {
-            window.scrollBy(0, -Math.max(1, Math.floor(position / 10)));
-            scrollAnimation = setTimeout("toTheTop()", 30);
-        } else clearTimeout(scrollAnimation);
+// Detect the number of pixels a user has vertically scrolled
+// Reference: https://hiroshi-yokota.com/2019/12/10/back-to-top/
+function getScrolled() {
+    if (window.pageYOffset !== undefined) {
+        return window.pageYOffset
+    } else {
+        return document.documentElement.scrollTop
     }
+}
+
+// Show or hide btt based on how much a user has vertically scrolled
+window.onscroll = () => {
+    if (getScrolled() > 500 ) {
+        btt.classList.add('is-shown')
+    } else {
+        btt.classList.remove('is-shown')
+    }
+}
+
+// Add smooth scroll event to btt when a user clicks
+// Reference: https://code-r-dev.com/scroll-top-button/
+function scrollToTheTop(element, duration) {
+    btt.addEventListener('click', function() {
+
+        // Get the current vertical scrolled position - (a)
+        let currentY = window.pageYOffset;
+
+        // If (a) is close to the top, scroll back to the top
+        // by 10px, otherwise by 100px
+        let step = duration/currentY > 1 ? 10 : 100;
+
+        // Calculate how many milliseconds are needed
+        // for one scroll to the top - (b)
+        let timeStep = duration/currentY * step;
+
+        // Call and repeat a function 'scrollUp' in (b)
+        let intervalID = setInterval(scrollUp, timeStep);
+
+        function scrollUp(){
+            currentY = window.pageYOffset;
+
+            // If the current vertical scrolled position is
+            // equal to 0, stop the function 'scrollUp'
+            if(currentY === 0) {
+                clearInterval(intervalID);
+
+            // If not, keep scrolling back to the top
+            } else {
+                scrollBy(0, -step);
+            }
+        }
+    })
+}
 
 /**
  * End Main Functions
@@ -147,3 +192,6 @@ smoothScroll();
 document.addEventListener("scroll", function() {
     makeActive();
   });
+
+// Scroll back to the top in 500 milliseconds (0.5secs)
+scrollToTheTop('js-button', 500);
